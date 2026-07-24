@@ -27,7 +27,27 @@ module.exports = {
                 return res.status(400).json(response(400, "validasi error!", validate));
             }
 
-            const user = await User.findOne({ where: {email: email} })
+            const user = await User.findOne({ where: {email: email} });
+            if (!user) {
+                return res.status(400).json(response(400, "validasi error, email not found. try again!",));
+            }
+
+            const checkPassword = passwordHash.verify(password, user.password);
+            if (!checkPassword) {
+                return res.status(400).json(response(400, "validasi error, password incorrect. try again!"));
+            }
+
+            const token = jwt.sign({ userId: user.id, name: user.name, email: user.email, password: user.password }, auth_secret);
+            if (!token) {
+                return res.status(400).json(response(400, "validasi error", "login failed!"));
+            }
+
+            const formatData = {
+                data: user,
+                token: token
+            }
+            
+            return res.status(200).json(response(200, "login berhasil", formatData));
         } catch (error) {
             return res.status(500).json(response(500, 'server error!', error.message))
         }
