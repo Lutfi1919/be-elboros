@@ -20,7 +20,6 @@ module.exports = (sequelize, DataTypes) => {
     user_id: DataTypes.BIGINT,
     judul: DataTypes.STRING,
     nominal: DataTypes.INTEGER,
-    tanggal: DataTypes.DATE,
     catatan: DataTypes.STRING
   }, {
     sequelize,

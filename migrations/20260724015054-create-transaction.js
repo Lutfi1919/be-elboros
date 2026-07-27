@@ -18,9 +18,6 @@ module.exports = {
       nominal: {
         type: Sequelize.INTEGER
       },
-      tanggal: {
-        type: Sequelize.DATE
-      },
       catatan: {
         type: Sequelize.STRING
       },
