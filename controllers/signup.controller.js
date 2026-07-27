@@ -8,12 +8,12 @@ const passwordHash = require('password-hash');
 module.exports = {
     signup: async (req, res) => {
         try {
-            const { name, email, password } = req.body
+            const { name, email, password } = req.body;
 
             const schema = {
-                name: { type: "string" },
-                email: { type: "string" },
-                password: { type: "string" },
+                name: { type: "string", min: 3 },
+                email: { type: "string", min: 10 },
+                password: { type: "string", min: 3 },
             }
 
             const data = {
@@ -23,14 +23,15 @@ module.exports = {
             }
 
             const validate = v.validate(data, schema);
-            if (validate.length) {
-                return res.status(400).json(response(400, "validasi error", error.message));
+            if (validate.length > 0) {
+                return res.status(400).json(response(400, "validasi error", validate));
             }
 
             const user = await User.create({
                 name: data.name,
                 email: data.email,
                 password: data.password,
+                saldo: 0
             })
 
             return res.status(201).json(response(201, 'created', user));
