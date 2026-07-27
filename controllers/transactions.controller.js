@@ -2,7 +2,6 @@ const Validator = require('fastest-validator');
 const v = new Validator();
 const { User, Transaction} = require('../models');
 const { response } = require('../helpers/response.formatter');
-const { Op, Transaction } = require('sequelize');
 
 module.exports = {
     createTransaction: async (req, res) => {
@@ -26,6 +25,11 @@ module.exports = {
             const validate = v.validate(data, schema);
             if (validate.length > 0) {
                 return res.status(400).json(response(400, "validasi error!", validate));
+            }
+
+            const user = await User.findByPk(data.user_id);
+            if (!user) {
+                return res.status(404).json(response(404, "user not found", null));
             }
 
             const transaction = await Transaction.create(data);
