@@ -38,7 +38,7 @@ module.exports = {
             return res.status(500).json(response(500, "server error!", error.message));
         }
     },
-    updateTransaction: async () => {
+    updateTransaction: async (req, res) => {
         try {
             const { id } = req.params;
             const { judul, nominal, catatan } = req.body;
@@ -72,7 +72,7 @@ module.exports = {
 
             return res.status(200).json(response(200, "transaction updated successfully!", transaction));
         } catch (error) {
-            return res.statu(500).json(response(500, "server error!", error.message))
+            return res.status(500).json(response(500, "server error!", error.message))
         }
     },
     deleteTransaction: async (req, res) => {
