@@ -37,5 +37,58 @@ module.exports = {
         } catch (error) {
             return res.status(500).json(response(500, "server error!", error.message));
         }
-    }
+    },
+    updateTransaction: async () => {
+        try {
+            const { id } = req.params;
+            const { judul, nominal, catatan } = req.body;
+
+            const schema = {
+                judul: { type: "string", min: 2 },
+                nominal: { type: "number", positive: true, integer: true },
+                catatan: { type: "string" }
+            }
+
+            const data = {
+                judul: judul,
+                nominal: Number(nominal),
+                catatan: catatan
+            }
+
+            const validate = v.validate(data, schema);
+            if (validate.length > 0) {
+                return res.status(400).json(response(400, "validasi error!", validate));
+            }
+
+            const transaction = await Transaction.findByPk(id);
+            if (!transaction) {
+                return res.status(400).json(response(400, "transaction not found!"))
+            }
+
+            transaction.judul = data.judul;
+            transaction.nominal = data.nominal;
+            transaction.catatan = data.catatan;
+            await transaction.save();
+
+            return res.status(200).json(response(200, "transaction updated successfully!", transaction));
+        } catch (error) {
+            return res.statu(500).json(response(500, "server error!", error.message))
+        }
+    },
+    deleteTransaction: async (req, res) => {
+        try {
+            const { id } = req.params;
+
+            const transaction = await Transaction.findByPk(id);
+            if (!transaction) {
+                return res.status(400).json(response(400, "transaction not found!"))
+            }
+            
+            await transaction.destroy();
+            return res.status(200).json(response(200, "transaction deleted!"));
+
+        } catch (error) {
+            return res.status(500).json(response(500, "server error!", error.message))
+        }
+    },
 }
