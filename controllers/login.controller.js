@@ -27,7 +27,11 @@ module.exports = {
                 return res.status(400).json(response(400, "validasi error!", validate));
             }
 
-            const user = await User.findOne({ where: {email: email} });
+            const user = await User.findOne({ 
+                where: {
+                    email: email
+                },
+            });
             if (!user) {
                 return res.status(400).json(response(400, "validasi error, email not found. try again!",));
             }
@@ -42,8 +46,11 @@ module.exports = {
                 return res.status(400).json(response(400, "validasi error", "login failed!"));
             }
 
+            const userResponse = user.toJSON();
+            delete userResponse.password;
+
             const formatData = {
-                data: user,
+                data: userResponse,
                 token: token
             }
             
