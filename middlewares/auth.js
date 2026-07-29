@@ -4,9 +4,14 @@ const { auth_secret } = require('../config/base.config')
 
 module.exports = {
     checkToken: async (req, res, next) => {
-        const token = req.header("Authorization");
-        if (!token) {
+        const authHeader = req.header("Authorization");
+        if (!authHeader) {
             return res.status(401).json(response(401, "unauthorized", "please login and try again!"));
+        }
+
+        const token = authHeader.split(" ")[1];
+        if (!token) {
+            return res.status(401).json(response(401, "unauthorized", "invalid token format!"));
         }
 
         try {
