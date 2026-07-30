@@ -7,14 +7,10 @@ const { Op } = require('sequelize');
 module.exports = {
     updateSaldo: async (req, res) => {
         try {
-            const user_id = req.user?.userId;
-            const { saldo } = req.body;
-
-            if (!user_id) {
-                return res.status(401).json(response(401, "unauthorized", "please login and try again!"));
-            }
+            const { user_id, saldo } = req.body;
 
             const schema = {
+                user_id: { type: "number", positive: true, integer:true },
                 saldo: { type: "number", positive: true, integer:true }
             } 
             

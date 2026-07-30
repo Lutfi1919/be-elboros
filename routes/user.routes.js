@@ -8,7 +8,6 @@ const { checkToken } = require('../middlewares/auth')
 
 router.post('/login', loginController.login);
 router.post('/signup', signUpController.signup);
-router.post('/logout', checkToken, loginController.logout);
 router.put('/saldo', checkToken, userController.updateSaldo);
 
 module.exports = router;

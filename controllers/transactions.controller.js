@@ -6,25 +6,20 @@ const { response } = require('../helpers/response.formatter');
 module.exports = {
     createTransaction: async (req, res) => {
         try {
-            const user_id = req.user?.userId;
-            const { judul, nominal, catatan } = req.body;
-
-            if (!user_id) {
-                return res.status(401).json(response(401, "unauthorized", "please login and try again!"));
-            }
+            const { user_id, judul, nominal, catatan } = req.body;
 
             const schema = {
+                user_id: { type: "number", positive: true, integer: true },
                 judul: { type: "string", min: 2 },
                 nominal: { type: "number", positive: true, integer: true },
-                catatan: { type: "string" },
+                catatan: { type: "string" }
             }
 
             const data = {
                 user_id: Number(user_id),
                 judul: judul,
                 nominal: Number(nominal),
-                catatan: catatan,
-                createdAt: new Date()
+                catatan: catatan
             }
 
             const validate = v.validate(data, schema);
@@ -54,15 +49,10 @@ module.exports = {
                 catatan: { type: "string" }
             }
 
-            const transaction = await Transaction.findByPk(id);
-            if (!transaction) {
-                return res.status(400).json(response(400, "transaction not found!"))
-            }
-
             const data = {
-                judul: judul ? judul : "Untitled",
-                nominal: Number(nominal) ? Number(nominal) : transaction.nominal,
-                catatan: catatan ? catatan : "-"
+                judul: judul,
+                nominal: Number(nominal),
+                catatan: catatan
             }
 
             const validate = v.validate(data, schema);
@@ -70,6 +60,10 @@ module.exports = {
                 return res.status(400).json(response(400, "validasi error!", validate));
             }
 
+            const transaction = await Transaction.findByPk(id);
+            if (!transaction) {
+                return res.status(400).json(response(400, "transaction not found!"))
+            }
 
             transaction.judul = data.judul;
             transaction.nominal = data.nominal;
@@ -97,20 +91,4 @@ module.exports = {
             return res.status(500).json(response(500, "server error!", error.message))
         }
     },
-    showUserTransactions: async (req, res) => {
-        try {
-            const userTransactions = await Transaction.findAll({
-                where: {
-                    user_id: req.user.userId
-                },
-                order: [
-                    ["createdAt", "DESC"]
-                ]
-            });
-
-            return res.status(200).json(response(200, "user transaction successfully found!", userTransactions));
-        } catch (error) {
-            return res.status(500).json(response(500, "server error!", error.message))
-        }
-    }
 }
