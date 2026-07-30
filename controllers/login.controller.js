@@ -58,5 +58,17 @@ module.exports = {
         } catch (error) {
             return res.status(500).json(response(500, 'server error!', error.message))
         }
+    },
+    logout: async (req, res) => {
+        try {
+            const user_id = req.user?.userId;
+            if (!user_id) {
+                return res.status(401).json(response(401, "unauthorized", "please login and try again!"));
+            }
+
+            return res.status(200).json(response(200, "logout successful!", null));
+        } catch (error) {
+            return res.status(500).json(response(500, 'server error!', error.message))
+        }
     }
 }
