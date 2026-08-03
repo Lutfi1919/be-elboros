@@ -44,5 +44,18 @@ module.exports = {
         } catch (error) {
            return res.status(500).json(response(500, 'server error!', error.message)); 
         }
+    },
+    showUser: async (req, res) => {
+        try {
+            const user_id = req.user?.userId;
+
+            if (!user_id) {
+                return res.status(400).json(response(400, "user not found!"))
+            }
+
+            return res.status(200).json(response(200, "user found!", user_id))
+        } catch (error) {
+            return res.status(500).json(response(500, 'server error!', error.message));
+        }
     }
 }
